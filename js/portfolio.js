@@ -1,12 +1,11 @@
-axios.get('https://api.github.com/users/rbalves/repos')
+const divRepos = document.getElementById('repos');
+
+const user = 'rbalves';
+
+axios.get(`https://api.github.com/users/${user}/repos`)
 	.then(response => {
-
-		const divRepos = document.getElementById('repos');
-
 		const repos = response.data;
-
 		repos.forEach(repo => {
-			console.log(repo);
 			const {name, description, created_at, language, stargazers_count, html_url} = repo;
 
 			const divCard = document.createElement("div");
@@ -44,12 +43,12 @@ axios.get('https://api.github.com/users/rbalves/repos')
 			const link = document.createElement('a');
 			link.setAttribute('target', '_blank');
 			link.setAttribute('href', html_url);
-			link.appendChild(document.createTextNode('Go to repo'));
+			link.appendChild(document.createTextNode('Ir para repositório'));
 			divCard.appendChild(link);
 
 			divRepos.appendChild(divCard);
 		})
 	})
 	.catch(error => {
-		console.log(error);
+		divRepos.appendChild(document.createTextNode('Erro ao consultar a API do Github.'));
 	})
