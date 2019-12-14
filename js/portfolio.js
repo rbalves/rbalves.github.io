@@ -2,21 +2,16 @@ const divRepos = document.getElementById('repos');
 
 const user = 'rbalves';
 
-function addText(element, classAdd, message) {
-	const text = document.createElement(element);
-	text.classList.add(classAdd);
-	text.appendChild(document.createTextNode(message));
-	return text;
-}
-
 const getRepos = async () => {
 	await axios.get(`https://api.github.com/users/${user}/repos`)
 	.then(response => {
 
 		const repos = response.data;
 
+		orderReposByStars(repos);
+
 		repos.forEach(repo => {
-			
+
 			const {name, description, created_at, language, stargazers_count, html_url} = repo;
 
 			const divCard = document.createElement("div");
@@ -44,6 +39,26 @@ const getRepos = async () => {
 	.catch(error => {
 		divRepos.appendChild(document.createTextNode('Erro ao consultar a API do Github.'));
 	})
+}
+
+function addText(element, classAdd, message) {
+	const text = document.createElement(element);
+	text.classList.add(classAdd);
+	text.appendChild(document.createTextNode(message));
+	return text;
+}
+
+function orderReposByStars(repos) {
+	repos.sort(function (a, b) {
+	  if (a.stargazers_count < b.stargazers_count) {
+	    return 1;
+	  }
+	  if (a.stargazers_count > b.stargazers_count) {
+	    return -1;
+	  }
+	  // a must be equal to b
+	  return 0;
+	});
 }
 
 getRepos();
