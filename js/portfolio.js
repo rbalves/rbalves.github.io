@@ -2,11 +2,14 @@ const divRepos = document.getElementById('repos');
 
 const user = 'rbalves';
 
-const getRepos = async () => {
-	await axios.get(`https://api.github.com/users/${user}/repos`)
+const getRepos = () => {
+	axios.get(`https://api.github.com/users/${user}/repos`)
 	.then(response => {
 
 		const repos = response.data;
+		
+		const strongReposLength = document.getElementById('repos_length');
+		strongReposLength.innerHTML = '(' + repos.length + ')';
 
 		orderReposByStars(repos);
 
@@ -21,10 +24,10 @@ const getRepos = async () => {
 			const divCardBody = document.createElement("div");
 			divCardBody.classList.add('card-body');
 
-			divCard.appendChild(addText('h4', 'card-title', name));
+			divCard.appendChild(addText('h4', 'card-title', name || 'Sem nome'));
 			divCard.appendChild(addText('strong', 'card-text', description || 'Nenhuma descrição'));
-			divCard.appendChild(addText('p', 'card-text', 'Criado em: ' + created_at.substr(0,10)));
-			divCard.appendChild(addText('p', 'card-text', 'Linguagem: ' + language));
+			divCard.appendChild(addText('p', 'card-text', 'Criado em: ' + (created_at.substr(0,10)) || 'Não identificada' ));
+			divCard.appendChild(addText('p', 'card-text', 'Linguagem: ' + (language || 'Não identificada')));
 			divCard.appendChild(addText('p', 'card-text', 'Estrelas: ' + stargazers_count));
 
 			const link = document.createElement('a');
