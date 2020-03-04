@@ -1,17 +1,16 @@
-const divRepos = document.getElementById('repos');
+(() => {
 
-const user = 'rbalves';
+	const divRepos = document.getElementById('repos');
+	divRepos.classList.add('row')
 
-const getRepos = () => {
+	const user = 'rbalves';
+
 	axios.get(`https://api.github.com/users/${user}/repos`)
 	.then(response => {
 
 		const repos = response.data;
-		
-		const strongReposLength = document.getElementById('repos_length');
-		strongReposLength.innerHTML = '(' + repos.length + ')';
 
-		orderReposByStars(repos);
+		orderReposByCreatedAt(repos);
 
 		const allTecnologies = repos.map(repo => {
 			const {language} = repo;
@@ -33,44 +32,69 @@ const getRepos = () => {
 			tecnologies.push(tecnologieInfo);
 		});
 
-		const ul = document.createElement('ul');
-		
-		ul.style.listStyleType = 'none';
-		ul.style.margin = '0';
-		ul.style.padding = '0';
+		// const ul = document.createElement('ul');
+		// ul.classList.add('ul-badges');
 
-		tecnologies.forEach(tecnologie => {
-			const li = document.createElement('li');
-			li.innerHTML = `${tecnologie.description} (${tecnologie.qty})`;
-			li.style.display = 'inline';
-			li.style.background = '#222d32';
-			li.style.color = '#fff';
-			li.style.margin = '5px'
-			li.style.padding = '3px';
-			li.style.borderRadius = '4px';
-			ul.appendChild(li);
-		});
+		// const li = document.createElement('li');
+		// li.innerHTML = `Todos (${repos.length})`;
+		// li.classList.add('li-badge-active');
+		// ul.appendChild(li);
 
-		const divBadges = document.getElementById('badges-tecnologies');
-		divBadges.appendChild(ul);
+		// tecnologies.forEach(tecnologie => {
+		// 	const li = document.createElement('li');
+		// 	li.innerHTML = `${tecnologie.description} (${tecnologie.qty})`;
+		// 	li.classList.add('li-badge-no-active');
+		// 	ul.appendChild(li);
+		// });
+
+		// const divBadges = document.getElementById('badges-tecnologies');
+		// divBadges.classList.add('div-badges');
+		// divBadges.appendChild(ul);
 
 		repos.forEach(repo => {
 
 			const {name, description, created_at, language, stargazers_count, html_url} = repo;
 
 			const divCard = document.createElement("div");
-			divCard.classList.add('card');
-			divCard.style.padding = '2%';
-			divCard.style.marginTop = '1%';
+			divCard.classList.add('col-md-3');
+			divCard.classList.add('col-sm-12');
+			divCard.classList.add('card-project');
 
 			const divCardBody = document.createElement("div");
 			divCardBody.classList.add('card-body');
 
-			divCard.appendChild(addText('h4', 'card-title', name || 'Sem nome'));
-			divCard.appendChild(addText('strong', 'card-text', description || 'Nenhuma descrição'));
-			divCard.appendChild(addText('p', 'card-text', 'Criado em: ' + (created_at.substr(0,10)) || 'Data não identificada' ));
-			divCard.appendChild(addText('p', 'card-text', 'Linguagem: ' + (language || 'Não identificada')));
-			divCard.appendChild(addText('p', 'card-text', 'Estrelas: ' + stargazers_count));
+			const elements = [
+				{
+					element: 'h4',
+					classAdd: 'card-title',
+					message: name || 'Sem nome'
+				},
+				{
+					element: 'strong',
+					classAdd: 'card-text',
+					message: description || 'Nenhuma descrição'
+				},
+				{
+					element: 'p',
+					classAdd: 'card-text',
+					message: 'Criado em: ' + ((created_at.substr(0,10)) || 'Data não identificada')
+				},
+				{
+					element: 'p',
+					classAdd: 'card-text',
+					message: 'Linguagem: ' + (language || 'Não identificada')
+				},
+				{
+					element: 'p',
+					classAdd: 'card-text',
+					message: 'Estrelas: ' + stargazers_count
+				},
+			];
+
+			elements.forEach(item => {
+				const {element, classAdd, message} = item;
+				divCard.appendChild(addText(element, classAdd, message));
+			});
 
 			const link = document.createElement('a');
 			link.setAttribute('target', '_blank');
@@ -84,7 +108,7 @@ const getRepos = () => {
 	.catch(error => {
 		divRepos.appendChild(document.createTextNode('Desculpe! Ocorreu um erro.'));
 	})
-}
+})();
 
 function addText(element, classAdd, message) {
 	const text = document.createElement(element);
@@ -101,9 +125,18 @@ function orderReposByStars(repos) {
 	  if (a.stargazers_count > b.stargazers_count) {
 	    return -1;
 	  }
-	  // a must be equal to b
 	  return 0;
 	});
 }
 
-getRepos();
+function orderReposByCreatedAt(repos) {
+	repos.sort(function (a, b) {
+	  if (a.created_at < b.created_at) {
+	    return 1;
+	  }
+	  if (a.created_at > b.created_at) {
+	    return -1;
+	  }
+	  return 0;
+	});
+}
