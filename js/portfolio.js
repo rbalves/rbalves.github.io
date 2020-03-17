@@ -5,7 +5,7 @@
 
 	const user = 'rbalves';
 
-	axios.get(`https://api.github.com/users/${user}/repos`)
+	axios.get(`https://api.github.com/users/${user}/repos?per_page=100`)
 	.then(response => {
 
 		const repos = response.data;
